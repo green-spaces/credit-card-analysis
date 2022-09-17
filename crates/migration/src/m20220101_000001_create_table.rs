@@ -7,30 +7,64 @@ pub struct Migration;
 impl MigrationTrait for Migration {
     async fn up(&self, manager: &SchemaManager) -> Result<(), DbErr> {
         // Replace the sample below with your own migration scripts
-        manager
-            .create_table(
-                sea_query::Table::create()
-                    .table(RawCsv::Table)
-                    .if_not_exists()
-                    .col(
-                        ColumnDef::new(RawCsv::Id)
-                            .integer()
-                            .not_null()
-                            .auto_increment()
-                            .primary_key(),
-                    )
-                    .col(ColumnDef::new(RawCsv::Text).string().not_null())
-                    .to_owned(),
-            )
-            .await
+        create_raw_csv_table(&manager).await?;
+        create_bill_line_table(&manager).await
     }
 
     async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
         // Replace the sample below with your own migration scripts
-        manager
-            .drop_table(sea_query::Table::drop().table(RawCsv::Table).to_owned())
-            .await
+        drop_csv_table(manager).await?;
+        drop_bill_line_table(manager).await
     }
+}
+
+async fn create_raw_csv_table(manager: &SchemaManager<'_>) -> Result<(), DbErr> {
+    manager
+        .create_table(
+            sea_query::Table::create()
+                .table(RawCsv::Table)
+                .if_not_exists()
+                .col(
+                    ColumnDef::new(RawCsv::Id)
+                        .integer()
+                        .not_null()
+                        .auto_increment()
+                        .primary_key(),
+                )
+                .col(ColumnDef::new(RawCsv::Text).string().not_null())
+                .to_owned(),
+        )
+        .await
+}
+
+async fn drop_csv_table(manager: &SchemaManager<'_>) -> Result<(), DbErr> {
+    manager
+        .drop_table(sea_query::Table::drop().table(RawCsv::Table).to_owned())
+        .await
+}
+
+async fn create_bill_line_table(manager: &SchemaManager<'_>) -> Result<(), DbErr> {
+    manager
+        .create_table(
+            sea_query::Table::create()
+                .table(BillLine::Table)
+                .if_not_exists()
+                .col(
+                    ColumnDef::new(BillLine::Id)
+                        .integer()
+                        .not_null()
+                        .primary_key()
+                        .auto_increment(),
+                )
+                .to_owned(),
+        )
+        .await
+}
+
+async fn drop_bill_line_table(manager: &SchemaManager<'_>) -> Result<(), DbErr> {
+    manager
+        .drop_table(sea_query::Table::drop().table(BillLine::Table).to_owned())
+        .await
 }
 
 #[derive(Iden)]
@@ -39,3 +73,21 @@ enum RawCsv {
     Id,
     Text,
 }
+
+#[derive(Iden)]
+enum BillLine {
+    Table,
+    Id,
+    TransactionData,
+    Description,
+    Debit,
+    Credit,
+    Balance,
+    RawCsvId,
+}
+
+// transaction_data: TdDate,
+// description: String,
+// debit: Option<Money>,
+// credit: Option<Money>,
+// balance: Money,
