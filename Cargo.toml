@@ -2,4 +2,6 @@
 
 members = [
     "crates/credit-card-app",
+    "crates/migration",
+    "crates/db-entity",
 ]
