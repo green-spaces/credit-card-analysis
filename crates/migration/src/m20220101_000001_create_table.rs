@@ -61,6 +61,7 @@ async fn create_bill_line_table(manager: &SchemaManager<'_>) -> Result<(), DbErr
                 .col(ColumnDef::new(BillLine::Debit).decimal())
                 .col(ColumnDef::new(BillLine::Credit).decimal())
                 .col(ColumnDef::new(BillLine::Balance).decimal().not_null())
+                .col(ColumnDef::new(BillLine::RawCsvId).integer().not_null())
                 .to_owned(),
         )
         .await
