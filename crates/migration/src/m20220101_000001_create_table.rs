@@ -7,8 +7,8 @@ pub struct Migration;
 impl MigrationTrait for Migration {
     async fn up(&self, manager: &SchemaManager) -> Result<(), DbErr> {
         // Replace the sample below with your own migration scripts
-        create_raw_csv_table(&manager).await?;
-        create_bill_line_table(&manager).await
+        create_raw_csv_table(manager).await?;
+        create_bill_line_table(manager).await
     }
 
     async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
@@ -56,6 +56,11 @@ async fn create_bill_line_table(manager: &SchemaManager<'_>) -> Result<(), DbErr
                         .primary_key()
                         .auto_increment(),
                 )
+                .col(ColumnDef::new(BillLine::TransactionData).date().not_null())
+                .col(ColumnDef::new(BillLine::Description).string().not_null())
+                .col(ColumnDef::new(BillLine::Debit).decimal())
+                .col(ColumnDef::new(BillLine::Credit).decimal())
+                .col(ColumnDef::new(BillLine::Balance).decimal().not_null())
                 .to_owned(),
         )
         .await

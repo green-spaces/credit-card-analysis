@@ -7,6 +7,11 @@ use sea_orm::entity::prelude::*;
 pub struct Model {
     #[sea_orm(primary_key)]
     pub id: i32,
+    pub transaction_data: String,
+    pub description: String,
+    pub debit: Option<f64>,
+    pub credit: Option<f64>,
+    pub balance: f64,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter)]
