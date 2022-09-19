@@ -3,4 +3,5 @@
 pub mod prelude;
 
 pub mod bill_line;
+pub mod bill_line_description;
 pub mod raw_csv;

@@ -8,18 +8,42 @@ pub struct Model {
     #[sea_orm(primary_key)]
     pub id: i32,
     pub transaction_data: String,
-    pub description: String,
+    pub description_id: i32,
     pub debit: Option<f64>,
     pub credit: Option<f64>,
     pub balance: f64,
+    pub raw_csv_id: i32,
 }
 
-#[derive(Copy, Clone, Debug, EnumIter)]
-pub enum Relation {}
+#[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
+pub enum Relation {
+    #[sea_orm(
+        belongs_to = "super::bill_line_description::Entity",
+        from = "Column::DescriptionId",
+        to = "super::bill_line_description::Column::Id",
+        on_update = "NoAction",
+        on_delete = "NoAction"
+    )]
+    BillLineDescription,
+    #[sea_orm(
+        belongs_to = "super::raw_csv::Entity",
+        from = "Column::RawCsvId",
+        to = "super::raw_csv::Column::Id",
+        on_update = "NoAction",
+        on_delete = "NoAction"
+    )]
+    RawCsv,
+}
 
-impl RelationTrait for Relation {
-    fn def(&self) -> RelationDef {
-        panic!("No RelationDef")
+impl Related<super::bill_line_description::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::BillLineDescription.def()
+    }
+}
+
+impl Related<super::raw_csv::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::RawCsv.def()
     }
 }
 
