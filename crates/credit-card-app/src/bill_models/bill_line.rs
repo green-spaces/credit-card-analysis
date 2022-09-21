@@ -7,25 +7,25 @@ type Money = f32;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct BillLine {
-    transaction_data: TdDate,
-    description: String,
-    debit: Option<Money>,
-    credit: Option<Money>,
-    balance: Money,
+    pub transaction_date: TdDate,
+    pub description: String,
+    pub debit: Option<Money>,
+    pub credit: Option<Money>,
+    pub balance: Money,
 }
 
 impl TryFrom<BillLineString> for BillLine {
     type Error = Infallible;
 
     fn try_from(v: BillLineString) -> Result<Self, Self::Error> {
-        let transaction_data = TdDate::from(v.0[0].clone());
+        let transaction_date = TdDate::from(v.0[0].clone());
         let description = v.0[1].clone();
         let debit: Option<Money> = v.0[2].clone().parse().ok();
         let credit: Option<Money> = v.0[3].clone().parse().ok();
         let balance: Money = v.0[4].clone().parse().unwrap();
 
         Ok(BillLine {
-            transaction_data,
+            transaction_date,
             description,
             debit,
             credit,
@@ -49,7 +49,7 @@ mod tests {
         ]);
 
         let expected_bill_line = BillLine {
-            transaction_data: TdDate::from("07/21/2022"),
+            transaction_date: TdDate::from("07/21/2022"),
             description: "COFFEE ISLAND".to_string(),
             debit: Some("11.83".to_string().parse().unwrap()),
             credit: None,

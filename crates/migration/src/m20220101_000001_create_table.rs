@@ -46,22 +46,38 @@ async fn drop_csv_table(manager: &SchemaManager<'_>) -> Result<(), DbErr> {
 }
 
 async fn create_bill_line_description_table(manager: &SchemaManager<'_>) -> Result<(), DbErr> {
-    manager.create_table(
-        sea_query::Table::create()
-            .table(BillLineDescription::Table)
-            .if_not_exists()
-            .col(ColumnDef::new(BillLineDescription::Id).integer().not_null().primary_key().auto_increment())
-            .col(ColumnDef::new(BillLineDescription::Description).string().not_null())
-            .to_owned()
-    ).await
+    manager
+        .create_table(
+            sea_query::Table::create()
+                .table(BillLineDescription::Table)
+                .if_not_exists()
+                .col(
+                    ColumnDef::new(BillLineDescription::Id)
+                        .integer()
+                        .not_null()
+                        .primary_key()
+                        .auto_increment(),
+                )
+                .col(
+                    ColumnDef::new(BillLineDescription::Description)
+                        .string()
+                        .not_null()
+                        .unique_key(),
+                )
+                .to_owned(),
+        )
+        .await
 }
 
 async fn drop_bill_line_description_table(manager: &SchemaManager<'_>) -> Result<(), DbErr> {
     manager
-        .drop_table(sea_query::Table::drop().table(BillLineDescription::Table).to_owned())
+        .drop_table(
+            sea_query::Table::drop()
+                .table(BillLineDescription::Table)
+                .to_owned(),
+        )
         .await
 }
-
 
 async fn create_bill_line_table(manager: &SchemaManager<'_>) -> Result<(), DbErr> {
     manager
@@ -86,15 +102,14 @@ async fn create_bill_line_table(manager: &SchemaManager<'_>) -> Result<(), DbErr
                     sea_query::ForeignKey::create()
                         .name("FK_raw_csv")
                         .from(BillLine::Table, BillLine::RawCsvId)
-                        .to(RawCsv::Table, RawCsv::Id)
-                    )
+                        .to(RawCsv::Table, RawCsv::Id),
+                )
                 .foreign_key(
                     sea_query::ForeignKey::create()
                         .name("FK_description")
                         .from(BillLine::Table, BillLine::DescriptionId)
-                        .to(BillLineDescription::Table, BillLineDescription::Id)
-                    )
-
+                        .to(BillLineDescription::Table, BillLineDescription::Id),
+                )
                 .to_owned(),
         )
         .await
@@ -129,5 +144,5 @@ enum BillLine {
 enum BillLineDescription {
     Table,
     Id,
-    Description
+    Description,
 }

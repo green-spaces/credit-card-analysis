@@ -11,6 +11,13 @@ impl<S: AsRef<str>> From<S> for TdDate {
     }
 }
 
+impl From<TdDate> for String {
+    fn from(d: TdDate) -> Self {
+        // TODO Check format produced
+        d.0.to_string()
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

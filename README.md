@@ -1,6 +1,8 @@
-# credit-card-analysis
+# Squirrel (credit-card-analysis)
 
 ## Initialize database
+
+Set `DATABASE_URL` in `root/.env` to your sqlite database. The database file must exist but can be empty.
 
 Run from root.
 
