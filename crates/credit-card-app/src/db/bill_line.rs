@@ -17,8 +17,6 @@ impl Database {
 
         let des_model = self.bld_create(&bill_line.description).await;
 
-        println!("Desc: {:#?}", des_model);
-
         let bl = entity::bill_line::ActiveModel {
             transaction_data: Set(bill_line.transaction_date.clone().into()),
             description_id: Set(des_model.id),

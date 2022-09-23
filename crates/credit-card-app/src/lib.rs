@@ -1,5 +1,10 @@
 //! Bill lines
 
-pub mod bill_models;
-pub mod db;
-pub mod utils;
+mod bill_models;
+mod db;
+mod error;
+mod squirrel;
+mod utils;
+
+pub use error::Error;
+pub use squirrel::Squirrel;

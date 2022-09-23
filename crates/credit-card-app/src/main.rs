@@ -1,32 +1,31 @@
-use credit_card_app::{
-    bill_models::{BillLineString, ParsedBillLine},
-    utils,
-};
+use std::io;
 
-use credit_card_app::db;
+use squirrel::{Error, Squirrel};
+
+const TEST_DATABASE: &str = "sqlite://test.db";
 
 #[tokio::main]
-async fn main() {
-    let db = db::Database::new("sqlite://test.db");
+async fn main() -> Result<(), Error> {
+    let sq = Squirrel::new(TEST_DATABASE);
 
-    let sample = "./bills/2022-04.csv";
+    let args = std::env::args().collect::<Vec<_>>();
 
-    let csv_contents = utils::read_file_to_string(sample);
-    let csv_model = db.csv_create(csv_contents.clone()).await;
-    println!("{:#?}", csv_model);
-
-    let bill_lines = BillLineString::parse_csv(csv_contents)
-        .into_iter()
-        .filter_map(|i| ParsedBillLine::try_from(i).ok())
-        .collect::<Vec<ParsedBillLine>>();
-
-    for line in bill_lines {
-        println!("{:?}", line);
-        let model = db.bill_line_create(line, csv_model.id).await;
-        println!("{:?}", model);
+    if let Some(file_path) = args.get(1) {
+        return sq.load_csv(file_path).await;
     }
 
-    for l in db.bld_read_all().await {
-        println!("{:?}", l);
+    println!("Welcome to Squirrel");
+    let mut input = String::new();
+    // Application Loop
+    while io::stdin().read_line(&mut input).is_ok() {
+        let trimmed_input = input.trim_end();
+        println!("Input: {}", trimmed_input);
+
+        if trimmed_input == "q" {
+            break;
+        }
+        input.clear();
     }
+
+    Ok(())
 }
