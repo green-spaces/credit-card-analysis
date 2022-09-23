@@ -9,11 +9,10 @@ use credit_card_app::db;
 async fn main() {
     let db = db::Database::new("sqlite://test.db");
 
-    let sample = "./bills/July-2022.csv";
+    let sample = "./bills/2022-05.csv";
 
     let csv_contents = utils::read_file_to_string(sample);
     let csv_model = db.insert_csv(csv_contents.clone()).await;
-
     println!("{:#?}", csv_model);
 
     let bill_lines = BillLineString::parse_csv(csv_contents)
@@ -25,5 +24,9 @@ async fn main() {
         println!("{:?}", line);
         let model = db.insert_bill_line(line, csv_model.id).await;
         println!("{:?}", model);
+    }
+
+    for l in db.bld_get_all().await {
+        println!("{:?}", l);
     }
 }

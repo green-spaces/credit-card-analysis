@@ -15,6 +15,17 @@ impl Database {
         }
     }
 
+    pub async fn bld_get_all(&self) -> Vec<entity::bill_line_description::Model> {
+        let db = sea_orm::Database::connect(&self.database_url)
+            .await
+            .unwrap();
+
+        entity::bill_line_description::Entity::find()
+            .all(&db)
+            .await
+            .unwrap()
+    }
+
     pub async fn insert_csv(&self, text: String) -> entity::raw_csv::Model {
         let db = sea_orm::Database::connect(&self.database_url)
             .await
