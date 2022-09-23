@@ -4,7 +4,7 @@ use sea_orm::{ActiveModelTrait, ColumnTrait, EntityTrait, QueryFilter, Set};
 use super::Database;
 
 impl Database {
-    pub async fn bld_get_all(&self) -> Vec<entity::bill_line_description::Model> {
+    pub async fn bld_read_all(&self) -> Vec<entity::bill_line_description::Model> {
         let db = sea_orm::Database::connect(&self.database_url)
             .await
             .unwrap();
@@ -23,13 +23,13 @@ impl Database {
         // Check if it already exists
         let desc = entity::bill_line_description::Entity::find()
             .filter(entity::bill_line_description::Column::Description.eq(description.to_string()))
-            .all(&db)
+            .one(&db)
             .await
             .unwrap();
 
         // Early return
-        if desc.len() == 1 {
-            return desc[0].clone();
+        if desc.is_some() {
+            return desc.unwrap();
         }
 
         let bl_description = entity::bill_line_description::ActiveModel {

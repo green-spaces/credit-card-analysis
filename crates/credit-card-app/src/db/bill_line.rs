@@ -1,14 +1,14 @@
 use db_entity::entity;
 use sea_orm::{ActiveModelTrait, NotSet, Set};
 
-use crate::bill_models::BillLine;
+use crate::bill_models::ParsedBillLine;
 
 use super::Database;
 
 impl Database {
-    pub async fn insert_bill_line(
+    pub async fn bill_line_create(
         &self,
-        bill_line: BillLine,
+        bill_line: ParsedBillLine,
         csv_id: i32,
     ) -> entity::bill_line::Model {
         let db = sea_orm::Database::connect(&self.database_url)

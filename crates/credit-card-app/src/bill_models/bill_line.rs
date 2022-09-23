@@ -6,7 +6,7 @@ use super::td_date::TdDate;
 type Money = f32;
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct BillLine {
+pub struct ParsedBillLine {
     pub transaction_date: TdDate,
     pub description: String,
     pub debit: Option<Money>,
@@ -14,7 +14,7 @@ pub struct BillLine {
     pub balance: Money,
 }
 
-impl TryFrom<BillLineString> for BillLine {
+impl TryFrom<BillLineString> for ParsedBillLine {
     type Error = Infallible;
 
     fn try_from(v: BillLineString) -> Result<Self, Self::Error> {
@@ -24,7 +24,7 @@ impl TryFrom<BillLineString> for BillLine {
         let credit: Option<Money> = v.0[3].clone().parse().ok();
         let balance: Money = v.0[4].clone().parse().unwrap();
 
-        Ok(BillLine {
+        Ok(ParsedBillLine {
             transaction_date,
             description,
             debit,
@@ -48,7 +48,7 @@ mod tests {
             "164.19".to_string(),
         ]);
 
-        let expected_bill_line = BillLine {
+        let expected_bill_line = ParsedBillLine {
             transaction_date: TdDate::from("07/21/2022"),
             description: "COFFEE ISLAND".to_string(),
             debit: Some("11.83".to_string().parse().unwrap()),
@@ -56,7 +56,7 @@ mod tests {
             balance: "164.19".parse().unwrap(),
         };
 
-        let parsed_bill_line: BillLine = input.try_into().unwrap();
+        let parsed_bill_line: ParsedBillLine = input.try_into().unwrap();
 
         assert_eq!(parsed_bill_line, expected_bill_line);
     }
