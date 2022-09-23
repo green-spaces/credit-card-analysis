@@ -9,7 +9,7 @@ use credit_card_app::db;
 async fn main() {
     let db = db::Database::new("sqlite://test.db");
 
-    let sample = "./bills/2022-05.csv";
+    let sample = "./bills/2022-08.csv";
 
     let csv_contents = utils::read_file_to_string(sample);
     let csv_model = db.insert_csv(csv_contents.clone()).await;
