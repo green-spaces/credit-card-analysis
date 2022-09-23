@@ -1,4 +1,5 @@
 //! Bill lines
+#![allow(dead_code)]
 
 mod bill_models;
 mod db;
