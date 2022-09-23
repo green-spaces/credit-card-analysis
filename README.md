@@ -1,6 +1,6 @@
 # Squirrel
 
-A local credit card bill analysis tool to squirrel away you money
+A local credit card bill analysis tool to help you squirrel away you money
 
 ## Initialize database
 
