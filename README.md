@@ -1,4 +1,6 @@
-# Squirrel (credit-card-analysis)
+# Squirrel
+
+A local credit card bill analysis tool to squirrel away you money
 
 ## Initialize database
 

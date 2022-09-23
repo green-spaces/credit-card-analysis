@@ -1,7 +1,7 @@
 [workspace]
 
 members = [
-    "crates/credit-card-app",
+    "crates/squirrel",
     "crates/migration",
     "crates/db-entity",
 ]
