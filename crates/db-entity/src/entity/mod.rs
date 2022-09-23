@@ -4,4 +4,5 @@ pub mod prelude;
 
 pub mod bill_line;
 pub mod bill_line_description;
+pub mod description_category;
 pub mod raw_csv;

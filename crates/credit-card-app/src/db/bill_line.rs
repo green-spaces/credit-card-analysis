@@ -15,9 +15,7 @@ impl Database {
             .await
             .unwrap();
 
-        let des_model = self
-            .insert_bill_line_description(&bill_line.description)
-            .await;
+        let des_model = self.bld_create(&bill_line.description).await;
 
         println!("Desc: {:#?}", des_model);
 

@@ -8,12 +8,27 @@ pub struct Model {
     #[sea_orm(primary_key)]
     pub id: i32,
     pub description: String,
+    pub description_category_id: Option<i32>,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {
+    #[sea_orm(
+        belongs_to = "super::description_category::Entity",
+        from = "Column::DescriptionCategoryId",
+        to = "super::description_category::Column::Id",
+        on_update = "NoAction",
+        on_delete = "NoAction"
+    )]
+    DescriptionCategory,
     #[sea_orm(has_many = "super::bill_line::Entity")]
     BillLine,
+}
+
+impl Related<super::description_category::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::DescriptionCategory.def()
+    }
 }
 
 impl Related<super::bill_line::Entity> for Entity {

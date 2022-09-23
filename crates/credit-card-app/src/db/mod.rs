@@ -1,6 +1,7 @@
-pub mod bill_line_description_methods;
-pub mod bill_line_methods;
-pub mod csv_methods;
+pub mod bill_line;
+pub mod bill_line_description;
+pub mod csv;
+pub mod description_category;
 
 pub struct Database {
     database_url: String,

@@ -15,19 +15,14 @@ impl Database {
             .unwrap()
     }
 
-    pub async fn insert_bill_line_description(
-        &self,
-        bill_line_desc: &str,
-    ) -> entity::bill_line_description::Model {
+    pub async fn bld_create(&self, description: &str) -> entity::bill_line_description::Model {
         let db = sea_orm::Database::connect(&self.database_url)
             .await
             .unwrap();
 
         // Check if it already exists
         let desc = entity::bill_line_description::Entity::find()
-            .filter(
-                entity::bill_line_description::Column::Description.eq(bill_line_desc.to_string()),
-            )
+            .filter(entity::bill_line_description::Column::Description.eq(description.to_string()))
             .all(&db)
             .await
             .unwrap();
@@ -38,7 +33,7 @@ impl Database {
         }
 
         let bl_description = entity::bill_line_description::ActiveModel {
-            description: Set(bill_line_desc.to_string()),
+            description: Set(description.to_string()),
             ..Default::default()
         };
 

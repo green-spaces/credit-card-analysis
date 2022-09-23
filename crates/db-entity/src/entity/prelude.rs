@@ -2,4 +2,5 @@
 
 pub use super::bill_line::Entity as BillLine;
 pub use super::bill_line_description::Entity as BillLineDescription;
+pub use super::description_category::Entity as DescriptionCategory;
 pub use super::raw_csv::Entity as RawCsv;
