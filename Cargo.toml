@@ -5,5 +5,3 @@ members = [
     "crates/migration",
     "crates/db-entity",
 ]
-
-# default-members = ["crates/squirrel"]

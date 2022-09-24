@@ -3,13 +3,14 @@ use std::io;
 use squirrel::{Error, Squirrel};
 
 const TEST_DATABASE: &str = "sqlite://test.db";
+const PROD_DATABASE: &str = "sqlite://prod.db";
 
 #[tokio::main]
 async fn main() -> Result<(), Error> {
-    let sq = Squirrel::new(TEST_DATABASE);
+    let sq = Squirrel::new(PROD_DATABASE);
 
+    // TODO Move into a command after starting squirrel
     let args = std::env::args().collect::<Vec<_>>();
-
     if let Some(file_path) = args.get(1) {
         return sq.load_csv(file_path).await;
     }
@@ -30,7 +31,9 @@ async fn main() -> Result<(), Error> {
                 squirrel::ui_actions::display_categories::display_categories(&sq).await;
             }
             "q" => break,
-            _ => todo!(),
+            _ => {
+                input = String::new()
+            },
         }
 
         input.clear();
