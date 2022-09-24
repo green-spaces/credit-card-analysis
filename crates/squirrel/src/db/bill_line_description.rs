@@ -1,9 +1,21 @@
-use db_entity::entity;
+use db_entity::entity::{self, bill_line_description};
 use sea_orm::{ActiveModelTrait, ColumnTrait, EntityTrait, QueryFilter, Set};
 
 use super::Database;
 
 impl Database {
+    pub async fn bld_read(&self, id: i32) -> db_entity::entity::bill_line_description::Model {
+        let db = sea_orm::Database::connect(&self.database_url)
+            .await
+            .unwrap();
+
+        entity::bill_line_description::Entity::find_by_id(id)
+            .one(&db)
+            .await
+            .unwrap()
+            .unwrap()
+    }
+
     pub async fn bld_read_all(&self) -> Vec<entity::bill_line_description::Model> {
         let db = sea_orm::Database::connect(&self.database_url)
             .await
@@ -38,5 +50,16 @@ impl Database {
         };
 
         bl_description.insert(&db).await.unwrap()
+    }
+
+    pub async fn bld_update(
+        &self,
+        bld_model: bill_line_description::ActiveModel,
+    ) -> bill_line_description::Model {
+        let db = sea_orm::Database::connect(&self.database_url)
+            .await
+            .unwrap();
+        let model = bld_model.update(&db).await.unwrap();
+        model
     }
 }

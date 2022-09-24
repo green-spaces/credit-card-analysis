@@ -14,16 +14,25 @@ async fn main() -> Result<(), Error> {
         return sq.load_csv(file_path).await;
     }
 
-    println!("Welcome to Squirrel");
+    println!("Squirrel - Nut Tracker");
     let mut input = String::new();
     // Application Loop
+    println!("Actions: (c)atigorize, (s)pending summery, (dc) display categories,  (q)uit");
     while io::stdin().read_line(&mut input).is_ok() {
         let trimmed_input = input.trim_end();
-        println!("Input: {}", trimmed_input);
 
-        if trimmed_input == "q" {
-            break;
+        match trimmed_input {
+            "c" => {
+                squirrel::ui_actions::categorize_descriptions::categorize_descriptions(&sq).await
+            }
+            "s" => println!("Not implemented yet"),
+            "dc" => {
+                squirrel::ui_actions::display_categories::display_categories(&sq).await;
+            }
+            "q" => break,
+            _ => todo!(),
         }
+
         input.clear();
     }
 

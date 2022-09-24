@@ -1,7 +1,7 @@
 use db_entity::entity;
 use sea_orm::{ActiveModelTrait, NotSet, Set};
 
-use crate::bill_models::ParsedBillLine;
+use crate::models::bill_models::ParsedBillLine;
 
 use super::Database;
 
