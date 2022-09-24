@@ -59,7 +59,7 @@ impl Database {
         let db = sea_orm::Database::connect(&self.database_url)
             .await
             .unwrap();
-        let model = bld_model.update(&db).await.unwrap();
-        model
+
+        bld_model.update(&db).await.unwrap()
     }
 }

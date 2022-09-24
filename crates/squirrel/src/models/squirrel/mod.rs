@@ -33,14 +33,12 @@ impl Squirrel {
     }
 
     pub async fn bld_not_categorized(&self) -> Vec<Model> {
-        let not_categorized = self
-            .db
+        self.db
             .bld_read_all()
             .await
             .into_iter()
             .filter(|bld| bld.description_category_id.is_none())
-            .collect::<Vec<_>>();
-        not_categorized
+            .collect::<Vec<_>>()
     }
 
     pub async fn dc_create(&self, name: &str) -> i32 {

@@ -1,5 +1,5 @@
 use db_entity::entity;
-use sea_orm::{ActiveModelTrait, ColumnTrait, EntityTrait, NotSet, QueryFilter, Related, Set};
+use sea_orm::{ActiveModelTrait, ColumnTrait, EntityTrait, NotSet, QueryFilter, Set};
 
 use crate::models::bill_models::ParsedBillLine;
 
@@ -44,11 +44,10 @@ impl Database {
             .await
             .unwrap();
 
-        let bls = entity::bill_line::Entity::find()
+        entity::bill_line::Entity::find()
             .filter(entity::bill_line::Column::DescriptionId.eq(bld.id))
             .all(&db)
             .await
-            .unwrap();
-        bls
+            .unwrap()
     }
 }
