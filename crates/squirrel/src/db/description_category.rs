@@ -51,4 +51,21 @@ impl Database {
 
         description_category::Entity::find().all(&db).await
     }
+
+    pub async fn all_dc_and_bld(
+        &self,
+    ) -> Result<
+        Vec<(
+            db_entity::entity::description_category::Model,
+            Vec<db_entity::entity::bill_line_description::Model>,
+        )>,
+        DbErr,
+    > {
+        let db = sea_orm::Database::connect(&self.database_url).await?;
+
+        description_category::Entity::find()
+            .find_with_related(db_entity::entity::bill_line_description::Entity)
+            .all(&db)
+            .await
+    }
 }

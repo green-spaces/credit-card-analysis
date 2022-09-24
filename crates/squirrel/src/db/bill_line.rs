@@ -1,5 +1,5 @@
 use db_entity::entity;
-use sea_orm::{ActiveModelTrait, NotSet, Set};
+use sea_orm::{ActiveModelTrait, ColumnTrait, EntityTrait, NotSet, QueryFilter, Related, Set};
 
 use crate::models::bill_models::ParsedBillLine;
 
@@ -34,5 +34,21 @@ impl Database {
         };
 
         bl.insert(&db).await.unwrap()
+    }
+
+    pub async fn bill_lines_for_bld(
+        &self,
+        bld: &entity::bill_line_description::Model,
+    ) -> Vec<entity::bill_line::Model> {
+        let db = sea_orm::Database::connect(&self.database_url)
+            .await
+            .unwrap();
+
+        let bls = entity::bill_line::Entity::find()
+            .filter(entity::bill_line::Column::DescriptionId.eq(bld.id))
+            .all(&db)
+            .await
+            .unwrap();
+        bls
     }
 }

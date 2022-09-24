@@ -59,4 +59,24 @@ impl Squirrel {
     pub async fn all_dc(&self) -> Vec<db_entity::entity::description_category::Model> {
         self.db.description_category_read_all().await.unwrap()
     }
+
+    pub async fn all_dc_and_bl(
+        &self,
+    ) -> Vec<(
+        db_entity::entity::description_category::Model,
+        Vec<db_entity::entity::bill_line::Model>,
+    )> {
+        let bld = self.db.all_dc_and_bld().await.unwrap();
+        let mut bl = Vec::new();
+
+        for (category, blds) in bld.iter() {
+            let mut single_bls = Vec::new();
+            for bld in blds {
+                let bill_lines = self.db.bill_lines_for_bld(bld).await;
+                single_bls.extend(bill_lines);
+            }
+            bl.push((category.clone(), single_bls));
+        }
+        bl
+    }
 }

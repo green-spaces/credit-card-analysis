@@ -25,7 +25,7 @@ async fn main() -> Result<(), Error> {
             "c" => {
                 squirrel::ui_actions::categorize_descriptions::categorize_descriptions(&sq).await
             }
-            "s" => println!("Not implemented yet"),
+            "s" => squirrel::ui_actions::spending_summary::spending_summary(&sq).await,
             "dc" => {
                 squirrel::ui_actions::display_categories::display_categories(&sq).await;
             }
