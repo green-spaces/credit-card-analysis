@@ -3,6 +3,7 @@ use crate::{db::Database, utils, Error};
 use db_entity::entity::bill_line_description::{self, Model};
 use sea_orm::Set;
 
+/// Core functionally for the Squirrel application
 pub struct Squirrel {
     db: Database,
 }
@@ -16,6 +17,7 @@ impl Squirrel {
 }
 
 impl Squirrel {
+    /// Parses and loads a csv into the database
     pub async fn load_csv(&self, file_path: &str) -> Result<(), Error> {
         let csv_contents = utils::read_file_to_string(file_path);
         let csv_model = self.db.csv_create(csv_contents.clone()).await?;
@@ -32,6 +34,7 @@ impl Squirrel {
         Ok(())
     }
 
+    /// Returns all the [BillLineDescription]s that do not have a [CategoryDescription]
     pub async fn bld_not_categorized(&self) -> Vec<Model> {
         self.db
             .bld_read_all()
@@ -41,6 +44,9 @@ impl Squirrel {
             .collect::<Vec<_>>()
     }
 
+    /// Create a new [DescriptionCategory] and returns it's id
+    ///
+    /// If the [DescriptionCategory] already exists, its id is returned
     pub async fn dc_create(&self, name: &str) -> i32 {
         let model = self.db.description_category_create(name).await.unwrap();
         model.id
@@ -54,10 +60,12 @@ impl Squirrel {
         Ok(())
     }
 
+    /// Returns all the [DescriptionCategory]s stored in the database
     pub async fn all_dc(&self) -> Vec<db_entity::entity::description_category::Model> {
         self.db.description_category_read_all().await.unwrap()
     }
 
+    /// Returns all the [DescriptionCategory]s and the BillLines associated to them
     pub async fn all_dc_and_bl(
         &self,
     ) -> Vec<(
