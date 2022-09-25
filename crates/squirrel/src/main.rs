@@ -2,6 +2,7 @@ use std::io;
 
 use squirrel::{Error, Squirrel};
 
+#[allow(dead_code)]
 const TEST_DATABASE: &str = "sqlite://test.db";
 const PROD_DATABASE: &str = "sqlite://prod.db";
 
@@ -31,9 +32,7 @@ async fn main() -> Result<(), Error> {
                 squirrel::ui_actions::display_categories::display_categories(&sq).await;
             }
             "q" => break,
-            _ => {
-                input = String::new()
-            },
+            _ => input = String::new(),
         }
 
         input.clear();
