@@ -6,26 +6,26 @@ use super::td_date::TdDate;
 type Money = f32;
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct BillLine {
-    transaction_data: TdDate,
-    description: String,
-    debit: Option<Money>,
-    credit: Option<Money>,
-    balance: Money,
+pub struct ParsedBillLine {
+    pub transaction_date: TdDate,
+    pub description: String,
+    pub debit: Option<Money>,
+    pub credit: Option<Money>,
+    pub balance: Money,
 }
 
-impl TryFrom<BillLineString> for BillLine {
+impl TryFrom<BillLineString> for ParsedBillLine {
     type Error = Infallible;
 
     fn try_from(v: BillLineString) -> Result<Self, Self::Error> {
-        let transaction_data = TdDate::from(v.0[0].clone());
+        let transaction_date = TdDate::from(v.0[0].clone());
         let description = v.0[1].clone();
         let debit: Option<Money> = v.0[2].clone().parse().ok();
         let credit: Option<Money> = v.0[3].clone().parse().ok();
         let balance: Money = v.0[4].clone().parse().unwrap();
 
-        Ok(BillLine {
-            transaction_data,
+        Ok(ParsedBillLine {
+            transaction_date,
             description,
             debit,
             credit,
@@ -48,15 +48,15 @@ mod tests {
             "164.19".to_string(),
         ]);
 
-        let expected_bill_line = BillLine {
-            transaction_data: TdDate::from("07/21/2022"),
+        let expected_bill_line = ParsedBillLine {
+            transaction_date: TdDate::from("07/21/2022"),
             description: "COFFEE ISLAND".to_string(),
             debit: Some("11.83".to_string().parse().unwrap()),
             credit: None,
             balance: "164.19".parse().unwrap(),
         };
 
-        let parsed_bill_line: BillLine = input.try_into().unwrap();
+        let parsed_bill_line: ParsedBillLine = input.try_into().unwrap();
 
         assert_eq!(parsed_bill_line, expected_bill_line);
     }
