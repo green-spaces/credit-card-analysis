@@ -6,7 +6,7 @@ use squirrel::{Error, Squirrel};
 const TEST_DATABASE: &str = "sqlite://test.db";
 const PROD_DATABASE: &str = "sqlite://prod.db";
 
-#[tokio::main]
+#[tokio::main(flavor = "multi_thread")]
 async fn main() -> Result<(), Error> {
     let sq = Squirrel::new(PROD_DATABASE);
 
