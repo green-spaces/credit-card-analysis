@@ -23,7 +23,7 @@ fn display_table(mut table: Vec<(String, f64)>) {
 
     for (name, debt) in table {
         let percent_spend = (debt / total_spend) * 100.0;
-        println!("{name:<longest_word$} |\t{debt:>7.2}\t| {percent_spend:<.1} %");
+        println!("{name:<longest_word$} |\t{debt:>7.2}\t|   {percent_spend:<.1} %");
     }
 
     println!("{:-<header_length$}", "-");
