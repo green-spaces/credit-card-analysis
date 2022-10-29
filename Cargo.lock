@@ -1713,6 +1713,7 @@ version = "0.1.0"
 dependencies = [
  "chrono",
  "db-entity",
+ "futures",
  "sea-orm",
  "tokio",
 ]

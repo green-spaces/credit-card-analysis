@@ -3,7 +3,6 @@ use crate::Squirrel;
 pub async fn categorize_descriptions(sq: &Squirrel) {
     let bld_to_categorize = sq.bld_not_categorized().await;
     for bld in bld_to_categorize {
-        println!("{:#?}", bld);
         println!("Actions: [p]rint categories, [c]reate category, [m]ap category id, [n]ext");
         let mut resp = String::new();
         std::io::stdin().read_line(&mut resp).unwrap();
