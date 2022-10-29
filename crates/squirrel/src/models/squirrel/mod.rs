@@ -1,7 +1,10 @@
+use futures::future::join_all;
+use sea_orm::Set;
+
+use db_entity::entity::bill_line_description::{self, Model};
+
 use super::bill_models::{BillLineString, ParsedBillLine};
 use crate::{db::Database, utils, Error};
-use db_entity::entity::bill_line_description::{self, Model};
-use sea_orm::Set;
 
 /// Core functionally for the Squirrel application
 pub struct Squirrel {
@@ -76,11 +79,18 @@ impl Squirrel {
         let mut bl = Vec::new();
 
         for (category, blds) in bld.iter() {
-            let mut single_bls = Vec::new();
-            for bld in blds {
-                let bill_lines = self.db.bill_lines_for_bld(bld).await;
-                single_bls.extend(bill_lines);
-            }
+            // let mut single_bls = Vec::new();
+            // for bld in blds {
+            //     let bill_lines = self.db.bill_lines_for_bld(bld).await;
+            //     single_bls.extend(bill_lines);
+            // }
+
+            let single_bls = join_all(blds.iter().map(|bld| self.db.bill_lines_for_bld(bld)))
+                .await
+                .into_iter()
+                .flatten()
+                .collect::<Vec<_>>();
+
             bl.push((category.clone(), single_bls));
         }
         bl
