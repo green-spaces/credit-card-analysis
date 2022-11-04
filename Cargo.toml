@@ -1,7 +1,5 @@
 [workspace]
 default-members =  [ "crates/squirrel"]
 members = [
-    "crates/squirrel",
-    "crates/migration",
-    "crates/db-entity",
+    "crates/*",
 ]
