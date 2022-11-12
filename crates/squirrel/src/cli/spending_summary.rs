@@ -2,6 +2,8 @@
 
 use clap::Args;
 
+use crate::Squirrel;
+
 #[derive(Debug, Args)]
 pub struct SpendingSummaryCommand {
     #[clap(short, long)]
@@ -15,7 +17,9 @@ pub struct SpendingSummary {
 }
 
 impl SpendingSummaryCommand {
-    pub fn summarize(&self, database_url: &str) -> SpendingSummary {
+    pub async fn summarize(&self, squirrel: &Squirrel) -> SpendingSummary {
+        let bl = squirrel.all_dc_and_bl().await;
+        println!("{bl:#?}");
         todo!()
     }
 }

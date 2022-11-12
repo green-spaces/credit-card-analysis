@@ -1,4 +1,3 @@
-use std::io;
 
 use squirrel::{Cli, Error, Squirrel};
 
@@ -16,13 +15,13 @@ Actions:
 
 #[tokio::main(flavor = "multi_thread")]
 async fn main() -> Result<(), Error> {
-    // let sq = Squirrel::new(PROD_DATABASE);
+    let _sq = Squirrel::new(PROD_DATABASE);
 
     let cli = Cli::parse();
 
     println!("{cli:?}");
 
-    cli.execute();
+    cli.execute().await;
 
     Ok(())
 }

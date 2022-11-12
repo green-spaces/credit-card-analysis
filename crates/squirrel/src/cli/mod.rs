@@ -4,6 +4,10 @@ use clap::{Parser, Subcommand};
 
 use spending_summary::SpendingSummaryCommand;
 
+use crate::Squirrel;
+
+const PROD_DATABASE: &str = "sqlite://prod.db";
+
 #[derive(Subcommand, Debug)]
 enum Actions {
     /// Summary of spending on the
@@ -30,11 +34,17 @@ impl Cli {
         <Self as Parser>::parse()
     }
 
-    pub fn execute(&self) {
-        let db_url = self.database_url.clone().unwrap_or_default();
+    pub async fn execute(&self) {
+        let db_url = self
+            .database_url
+            .clone()
+            .unwrap_or_else(|| PROD_DATABASE.to_string());
+
+        let sq = Squirrel::new(&db_url);
+
         match &self.command {
             Actions::SpendingSummary(command) => {
-                let spending_summary = command.summarize(&db_url);
+                let spending_summary = command.summarize(&sq).await;
                 // display summary
                 println!("{spending_summary:#?}");
             }

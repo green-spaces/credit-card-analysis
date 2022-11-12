@@ -1,2 +1,2 @@
-pub mod bill_models;
+pub mod bill_parsing_models;
 pub mod squirrel;

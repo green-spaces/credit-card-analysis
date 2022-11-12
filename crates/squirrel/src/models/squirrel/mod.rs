@@ -1,9 +1,13 @@
+mod entry_line;
+
 use futures::future::join_all;
 use sea_orm::Set;
 
 use db_entity::entity::bill_line_description::{self, Model};
 
-use super::bill_models::{BillLineString, ParsedBillLine};
+use super::bill_parsing_models::{BillLineString, ParsedBillLine};
+// use entry_line::EntryLine;
+
 use crate::{db::Database, utils, Error};
 
 /// Core functionally for the Squirrel application
