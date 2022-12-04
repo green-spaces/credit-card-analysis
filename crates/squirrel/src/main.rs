@@ -1,4 +1,3 @@
-
 use squirrel::{Cli, Error, Squirrel};
 
 #[allow(dead_code)]
