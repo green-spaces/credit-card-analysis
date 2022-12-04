@@ -36,7 +36,7 @@ impl<U: Money> LineItemSummary<U> {
         let filtered_items = items
             .into_iter()
             .filter(|item| {
-                let res = filters.iter().all(|filter| filter.call(item));
+                let res = filters.iter().all(|filter| filter.apply(item));
                 res
             })
             .collect();

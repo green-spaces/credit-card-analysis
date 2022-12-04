@@ -3,25 +3,33 @@ use chrono::NaiveDate;
 use super::{LineItem, Money};
 
 pub struct LineFilter<U: Money> {
-    f: Box<dyn Fn(&LineItem<U>) -> bool>,
+    filter_func: Box<dyn Fn(&LineItem<U>) -> bool>,
 }
 
 impl<U: Money> LineFilter<U> {
-    pub fn call(&self, line_item: &LineItem<U>) -> bool {
-        (self.f)(line_item)
+    /// Allows for the creation of new filters
+    pub fn new(filter: Box<dyn Fn(&LineItem<U>) -> bool>) -> Self {
+        Self {
+            filter_func: filter,
+        }
+    }
+
+    /// Applies the filter
+    pub fn apply(&self, line_item: &LineItem<U>) -> bool {
+        (self.filter_func)(line_item)
     }
 
     /// Produces a function that returns true when the [LineItem]'s data is on is on or after the supplied date
     pub fn item_date_on_or_after(start: NaiveDate) -> Self {
         Self {
-            f: Box::new(move |item: &LineItem<U>| item.date >= start),
+            filter_func: Box::new(move |item: &LineItem<U>| item.date >= start),
         }
     }
 
     /// Produces a function that returns true when the [LineItem]'s data is before the
     pub fn item_date_before(end: NaiveDate) -> Self {
         Self {
-            f: Box::new(move |item: &LineItem<U>| item.date < end),
+            filter_func: Box::new(move |item: &LineItem<U>| item.date < end),
         }
     }
 }
@@ -46,7 +54,7 @@ mod tests {
 
             // Test
             let lf = LineFilter::item_date_on_or_after(filter_date);
-            assert!(lf.call(&item))
+            assert!(lf.apply(&item))
         }
 
         #[test]
@@ -60,7 +68,7 @@ mod tests {
             };
 
             let lf = LineFilter::item_date_on_or_after(start_after_item);
-            assert!(lf.call(&item))
+            assert!(lf.apply(&item))
         }
 
         #[test]
@@ -74,7 +82,7 @@ mod tests {
             };
 
             let lf = LineFilter::item_date_on_or_after(start_after_item);
-            assert!(!lf.call(&item))
+            assert!(!lf.apply(&item))
         }
     }
 
@@ -93,7 +101,7 @@ mod tests {
 
             // Test
             let lf = LineFilter::item_date_before(start_after_item);
-            assert!(!lf.call(&item))
+            assert!(!lf.apply(&item))
         }
 
         #[test]
@@ -107,7 +115,7 @@ mod tests {
             };
 
             let lf = LineFilter::item_date_before(start_after_item);
-            assert!(!lf.call(&item))
+            assert!(!lf.apply(&item))
         }
 
         #[test]
@@ -121,7 +129,7 @@ mod tests {
             };
 
             let lf = LineFilter::item_date_before(start_after_item);
-            assert!(lf.call(&item))
+            assert!(lf.apply(&item))
         }
     }
 }
