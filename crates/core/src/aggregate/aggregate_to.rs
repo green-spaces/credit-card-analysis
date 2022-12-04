@@ -1,5 +1,6 @@
 use crate::line_item::{LineItemSummary, Money};
 
-pub trait AggregateTo<A, U: Money> {
-    fn aggregate_to(summary: LineItemSummary<U>) -> A;
+/// Aggregates a summary
+pub trait AggregateFrom<U: Money> {
+    fn aggregate_from(summary: LineItemSummary<U>) -> Self;
 }

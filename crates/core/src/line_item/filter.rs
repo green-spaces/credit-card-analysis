@@ -26,6 +26,7 @@ impl<U: Money> LineFilter<U> {
     }
 }
 
+#[cfg(test)]
 mod tests {
     use super::*;
     use chrono::Duration;

@@ -46,9 +46,9 @@ impl<U: Money> LineItemSummary<U> {
     }
 }
 
+#[cfg(test)]
 mod tests {
     use super::*;
-    use chrono::NaiveDate;
 
     #[test]
     fn empty_line_item_summary() {
