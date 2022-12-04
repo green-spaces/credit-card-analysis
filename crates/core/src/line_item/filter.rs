@@ -2,17 +2,30 @@ use chrono::NaiveDate;
 
 use super::{LineItem, Money};
 
-/// Produces a function that returns true when the [LineItem]'s data is on is on or after the supplied date
-pub fn item_date_on_or_after<U: Money>(start: NaiveDate) -> impl Fn(&LineItem<U>) -> bool {
-    move |item: &LineItem<U>| item.date >= start
+pub struct LineFilter<U: Money> {
+    f: Box<dyn Fn(&LineItem<U>) -> bool>,
 }
 
-/// Produces a function that returns true when the [LineItem]'s data is before the
-pub fn item_date_before<U: Money>(end: NaiveDate) -> impl Fn(&LineItem<U>) -> bool {
-    move |item: &LineItem<U>| item.date < end
+impl<U: Money> LineFilter<U> {
+    pub fn call(&self, line_item: &LineItem<U>) -> bool {
+        (self.f)(line_item)
+    }
+
+    /// Produces a function that returns true when the [LineItem]'s data is on is on or after the supplied date
+    pub fn item_date_on_or_after(start: NaiveDate) -> Self {
+        Self {
+            f: Box::new(move |item: &LineItem<U>| item.date >= start),
+        }
+    }
+
+    /// Produces a function that returns true when the [LineItem]'s data is before the
+    pub fn item_date_before(end: NaiveDate) -> Self {
+        Self {
+            f: Box::new(move |item: &LineItem<U>| item.date < end),
+        }
+    }
 }
 
-#[cfg(test)]
 mod tests {
     use super::*;
     use chrono::Duration;
@@ -23,7 +36,7 @@ mod tests {
         #[test]
         fn filter_date_before_item_date() {
             let item_date = NaiveDate::from_ymd(2022, 1, 1);
-            let start_after_item = item_date - Duration::days(1);
+            let filter_date = item_date - Duration::days(1);
             let item = LineItem {
                 flow: 0,
                 category: "Category".to_string(),
@@ -31,8 +44,8 @@ mod tests {
             };
 
             // Test
-            let concrete_date_on_or_after = item_date_on_or_after(start_after_item);
-            assert!(concrete_date_on_or_after(&item))
+            let lf = LineFilter::item_date_on_or_after(filter_date);
+            assert!(lf.call(&item))
         }
 
         #[test]
@@ -45,8 +58,8 @@ mod tests {
                 date: item_date,
             };
 
-            let concrete_date_on_or_after = item_date_on_or_after(start_after_item);
-            assert!(concrete_date_on_or_after(&item))
+            let lf = LineFilter::item_date_on_or_after(start_after_item);
+            assert!(lf.call(&item))
         }
 
         #[test]
@@ -59,8 +72,8 @@ mod tests {
                 date: item_date,
             };
 
-            let concrete_date_on_or_after = item_date_on_or_after(start_after_item);
-            assert!(!concrete_date_on_or_after(&item))
+            let lf = LineFilter::item_date_on_or_after(start_after_item);
+            assert!(!lf.call(&item))
         }
     }
 
@@ -78,8 +91,8 @@ mod tests {
             };
 
             // Test
-            let concrete_date_before = item_date_before(start_after_item);
-            assert!(!concrete_date_before(&item))
+            let lf = LineFilter::item_date_before(start_after_item);
+            assert!(!lf.call(&item))
         }
 
         #[test]
@@ -92,8 +105,8 @@ mod tests {
                 date: item_date,
             };
 
-            let concrete_date_before = item_date_before(start_after_item);
-            assert!(!concrete_date_before(&item))
+            let lf = LineFilter::item_date_before(start_after_item);
+            assert!(!lf.call(&item))
         }
 
         #[test]
@@ -106,8 +119,8 @@ mod tests {
                 date: item_date,
             };
 
-            let concrete_date_before = item_date_before(start_after_item);
-            assert!(concrete_date_before(&item))
+            let lf = LineFilter::item_date_before(start_after_item);
+            assert!(lf.call(&item))
         }
     }
 }
