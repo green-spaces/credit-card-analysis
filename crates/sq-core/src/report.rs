@@ -9,7 +9,7 @@ where
     let mut cates = agg.category_spend.iter().collect::<Vec<_>>();
     cates[..].sort_by(|a, b| b.1.cmp(&a.1));
 
-    let longest_word = cates.iter().map(|row| row.0.len()).max().unwrap();
+    let longest_word = cates.iter().map(|row| row.0.len()).max().unwrap_or(12);
     let total_spend = cates.iter().map(|row| *row.1).sum::<U>();
 
     let header = format!(

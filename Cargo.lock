@@ -1766,6 +1766,7 @@ dependencies = [
  "clap 4.0.18",
  "db-entity",
  "futures",
+ "num-traits",
  "sea-orm",
  "sq-core",
  "tokio",

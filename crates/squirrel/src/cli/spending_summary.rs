@@ -1,20 +1,20 @@
 //! Produces a spending summary
 
-use chrono::NaiveDate;
-use clap::Args;
-
 use crate::Squirrel;
+use chrono::{Datelike, NaiveDate};
+use clap::Args;
+use num_traits::cast::FromPrimitive;
 
 use sq_core::{
     aggregate::{AggregateFrom, CategoryAggregate},
-    line_item::{LineItem, LineItemReduction},
+    line_item::{LineFilter, LineItem, LineItemReduction},
     report,
 };
 
 #[derive(Debug, Args)]
 pub struct SpendingSummaryCommand {
     #[clap(short, long)]
-    month: Option<u8>,
+    month: Option<u32>,
 }
 
 impl SpendingSummaryCommand {
@@ -25,8 +25,12 @@ impl SpendingSummaryCommand {
             .map(|(cat, bls)| {
                 bls.iter()
                     .map(|bl| {
-                        // TODO missing returns
-                        let flow = bl.debit.unwrap_or_default().round() as i32;
+                        // Credits are refunds and should be negative
+                        let flow = bl
+                            .debit
+                            .or(bl.credit.map(|i| -i))
+                            .unwrap_or_default()
+                            .round() as i32;
                         let date =
                             NaiveDate::parse_from_str(&bl.transaction_data, "%Y-%m-%d").unwrap();
                         LineItem::new(flow, &cat.name, date)
@@ -38,7 +42,22 @@ impl SpendingSummaryCommand {
             .flatten()
             .collect::<Vec<_>>();
 
-        let reduction = LineItemReduction::reduce(line_items, Vec::new());
+        let mut filters = vec![LineFilter::new(Box::new(|ln| ln.category != "Payment"))];
+        if let Some(month) = self.month {
+            let now = chrono::Utc::now().naive_local().date();
+            let year = now.year();
+            let start = NaiveDate::from_ymd(year, month, 1);
+            let end = start.checked_add_months(chrono::Months::new(1)).unwrap();
+
+            filters.push(LineFilter::item_date_on_or_after(start));
+            filters.push(LineFilter::item_date_before(end));
+            println!(
+                "Month: {} - {}",
+                chrono::Month::from_u32(month).unwrap().name(),
+                year
+            );
+        };
+        let reduction = LineItemReduction::reduce(line_items, filters);
         let cat_agg = CategoryAggregate::aggregate_from(reduction);
 
         report::descending_report(&cat_agg);
