@@ -44,7 +44,7 @@ impl Cli {
 
         match &self.command {
             Actions::SpendingSummary(command) => {
-                let spending_summary = command.summarize(&sq).await;
+                let spending_summary = command.display_summary(&sq).await;
                 // display summary
                 println!("{spending_summary:#?}");
             }

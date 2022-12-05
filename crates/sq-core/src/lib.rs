@@ -3,3 +3,6 @@ pub mod aggregate;
 
 /// Module handles LineItems
 pub mod line_item;
+
+/// Reporting methods
+pub mod report;

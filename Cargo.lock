@@ -428,13 +428,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "core"
-version = "0.1.0"
-dependencies = [
- "chrono",
-]
-
-[[package]]
 name = "core-foundation-sys"
 version = "0.8.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1654,6 +1647,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "sq-core"
+version = "0.1.0"
+dependencies = [
+ "chrono",
+]
+
+[[package]]
 name = "sqlformat"
 version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1767,6 +1767,7 @@ dependencies = [
  "db-entity",
  "futures",
  "sea-orm",
+ "sq-core",
  "tokio",
 ]
 
