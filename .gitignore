@@ -1,4 +1,4 @@
 /target
 /bills
-*.db
+*.db*
 /crates/clap-intro/*

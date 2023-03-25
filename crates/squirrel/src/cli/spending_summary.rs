@@ -15,6 +15,8 @@ use sq_core::{
 pub struct SpendingSummaryCommand {
     #[clap(short, long)]
     month: Option<u32>,
+    #[clap(short, long)]
+    year: Option<i32>,
 }
 
 impl SpendingSummaryCommand {
@@ -23,7 +25,7 @@ impl SpendingSummaryCommand {
 
         let mut filters = vec![LineFilter::new(Box::new(|ln| ln.category != "Payment"))];
         if let Some(month) = self.month {
-            filters.extend(build_month_filters(month));
+            filters.extend(build_month_filters(month, self.year));
             println!("Month: {}", chrono::Month::from_u32(month).unwrap().name(),);
         };
         let reduction = LineItemReduction::reduce(line_items, filters);
@@ -34,11 +36,11 @@ impl SpendingSummaryCommand {
     }
 }
 
-pub fn build_month_filters<U: Money>(month: u32) -> Vec<LineFilter<U>> {
+pub fn build_month_filters<U: Money>(month: u32, year: Option<i32>) -> Vec<LineFilter<U>> {
     let mut filters = Vec::new();
 
     let now = chrono::Utc::now().naive_local().date();
-    let year = now.year();
+    let year = year.unwrap_or(now.year());
     let start = NaiveDate::from_ymd(year, month, 1);
     let end = start.checked_add_months(chrono::Months::new(1)).unwrap();
 
