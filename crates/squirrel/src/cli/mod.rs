@@ -48,7 +48,5 @@ impl Cli {
             }
             _ => todo!("Unimplemented actions"),
         }
-
-        todo!()
     }
 }
